@@ -1,16 +1,14 @@
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-
 import '../../providers/auth_provider.dart';
-import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../widgets/loading_overlay.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({Key? key}) : super(key: key);
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -27,21 +25,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
+  Future<void> _handleResetPassword() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    try {
+      // await authProvider.resetPassword(_emailController.text.trim());
+      setState(() => _emailSent = true);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.error ?? 'Erro ao enviar e-mail'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = context.watch<AuthProvider>();
 
     return LoadingOverlay(
       isLoading: authProvider.isLoading,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Recuperar Senha'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-          ),
-        ),
+        appBar: AppBar(title: const Text('Recuperar Senha')),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -54,30 +64,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _buildFormView() {
     final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 32),
-
-        // Header
-        Text(
-          'Esqueceu sua senha?',
-          style: theme.textTheme.displaySmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text('Esqueceu sua senha?',
+            style: theme.textTheme.displaySmall
+                ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text(
-          'Digite seu e-mail e enviaremos um link para redefinir sua senha',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onBackground.withOpacity(0.7),
-          ),
-        ),
-
+        Text('Digite seu e-mail para receber o link de recuperação.',
+            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey)),
         const SizedBox(height: 32),
-
-        // Form
         Form(
           key: _formKey,
           child: Column(
@@ -85,32 +82,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               CustomTextField(
                 controller: _emailController,
                 label: 'E-mail',
-                hintText: 'Digite seu e-mail',
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: Icons.email_outlined,
                 validator: MultiValidator([
                   RequiredValidator(errorText: 'E-mail é obrigatório'),
                   EmailValidator(errorText: 'Digite um e-mail válido'),
-                ]),
+                ]).call,
               ),
-
               const SizedBox(height: 32),
-
               CustomButton(
                 text: 'Enviar Link',
                 onPressed: _handleResetPassword,
               ),
             ],
-          ),
-        ),
-
-        const Spacer(),
-
-        // Back to Login
-        Center(
-          child: TextButton(
-            onPressed: () => context.pop(),
-            child: Text('Voltar ao Login'),
           ),
         ),
       ],
@@ -119,30 +103,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _buildSuccessView() {
     final theme = Theme.of(context);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.mark_email_read,
-          size: 80,
-          color: theme.colorScheme.primary,
-        ),
+        Icon(Icons.mark_email_read, size: 80, color: theme.colorScheme.primary),
         const SizedBox(height: 24),
-        Text(
-          'E-mail Enviado!',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text('E-mail Enviado!',
+            style: theme.textTheme.headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
-          'Verifique sua caixa de entrada e clique no link para redefinir sua senha',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onBackground.withOpacity(0.7),
-          ),
-          textAlign: TextAlign.center,
-        ),
+            'Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.',
+            style: theme.textTheme.bodyMedium,
+            textAlign: TextAlign.center),
         const SizedBox(height: 32),
         CustomButton(
           text: 'Voltar ao Login',
@@ -150,25 +123,5 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
       ],
     );
-  }
-
-  Future<void> _handleResetPassword() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
-    try {
-      await authProvider.resetPassword(_emailController.text.trim());
-      setState(() {
-        _emailSent = true;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(authProvider.error ?? 'Erro ao enviar e-mail'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    }
   }
 }

@@ -1,19 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../domain/entities/user.dart' as app_user;
-
-class AuthService extends ChangeNotifier {
+/// AuthService lida diretamente com o Firebase Authentication.
+/// Suas responsabilidades são criar usuário, fazer login, logout, etc.
+class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  /// Retorna o usuário atualmente logado no Firebase.
   User? get currentUser => _auth.currentUser;
-  bool get isAuthenticated => currentUser != null;
 
+  /// Stream que notifica sobre mudanças no estado de autenticação (login/logout).
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Email/Password Sign Up
+  /// Cria um novo usuário com e-mail e senha.
   Future<UserCredential?> signUpWithEmailPassword({
     required String email,
     required String password,
@@ -24,116 +25,64 @@ class AuthService extends ChangeNotifier {
         email: email,
         password: password,
       );
-
-      // Update display name
+      // Atualiza o nome de exibição do usuário no Firebase.
       await credential.user?.updateDisplayName(name);
-
-      notifyListeners();
       return credential;
     } on FirebaseAuthException catch (e) {
+      // Converte o erro do Firebase em uma mensagem legível.
       throw _handleAuthException(e);
     }
   }
 
-  // Email/Password Sign In
+  /// Autentica um usuário existente com e-mail e senha.
   Future<UserCredential?> signInWithEmailPassword({
     required String email,
     required String password,
   }) async {
     try {
-      final credential = await _auth.signInWithEmailAndPassword(
+      return await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      notifyListeners();
-      return credential;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
-  // Google Sign In
+  /// Autentica um usuário usando a conta do Google.
   Future<UserCredential?> signInWithGoogle() async {
     try {
+      // O fluxo de login com Google é diferente para Web e Mobile.
       if (kIsWeb) {
-        // Web implementation
-        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-        googleProvider.addScope('email');
-        googleProvider.addScope('profile');
-
-        final credential = await _auth.signInWithPopup(googleProvider);
-        notifyListeners();
-        return credential;
+        final googleProvider = GoogleAuthProvider();
+        return await _auth.signInWithPopup(googleProvider);
       } else {
-        // Mobile implementation
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        final googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null;
 
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+        final googleAuth = await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-
-        final userCredential = await _auth.signInWithCredential(credential);
-        notifyListeners();
-        return userCredential;
+        return await _auth.signInWithCredential(credential);
       }
     } catch (e) {
       throw Exception('Erro ao fazer login com Google: $e');
     }
   }
 
-  // Reset Password
-  Future<void> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  // Sign Out
+  /// Desconecta o usuário do aplicativo.
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _auth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
-      notifyListeners();
+      await _auth.signOut();
+      await _googleSignIn.signOut();
     } catch (e) {
       throw Exception('Erro ao fazer logout: $e');
     }
   }
 
-  // Update Profile
-  Future<void> updateProfile({
-    String? displayName,
-    String? photoURL,
-  }) async {
-    try {
-      await currentUser?.updateDisplayName(displayName);
-      await currentUser?.updatePhotoURL(photoURL);
-      await currentUser?.reload();
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Erro ao atualizar perfil: $e');
-    }
-  }
-
-  // Delete Account
-  Future<void> deleteAccount() async {
-    try {
-      await currentUser?.delete();
-      notifyListeners();
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  // Handle Auth Exceptions
+  /// Converte os códigos de erro do FirebaseAuth em mensagens amigáveis.
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':
@@ -141,19 +90,13 @@ class AuthService extends ChangeNotifier {
       case 'email-already-in-use':
         return 'Este e-mail já está em uso.';
       case 'user-not-found':
-        return 'Usuário não encontrado.';
+        return 'Usuário não encontrado com este e-mail.';
       case 'wrong-password':
-        return 'Senha incorreta.';
+        return 'Senha incorreta. Tente novamente.';
       case 'invalid-email':
-        return 'E-mail inválido.';
-      case 'user-disabled':
-        return 'Usuário desabilitado.';
-      case 'too-many-requests':
-        return 'Muitas tentativas. Tente novamente mais tarde.';
-      case 'operation-not-allowed':
-        return 'Operação não permitida.';
+        return 'O formato do e-mail é inválido.';
       default:
-        return 'Erro de autenticação: ${e.message}';
+        return 'Ocorreu um erro inesperado. Tente novamente.';
     }
   }
 }

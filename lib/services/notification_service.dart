@@ -1,4 +1,3 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:html' as html;
@@ -12,7 +11,7 @@ class NotificationService {
   Future<void> initialize() async {
     try {
       // Request permissions
-      NotificationSettings settings = await _messaging.requestPermission(
+      var settings = await _messaging.requestPermission(
         alert: true,
         announcement: false,
         badge: true,
@@ -24,7 +23,7 @@ class NotificationService {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         debugPrint('User granted permission for notifications');
-        
+
         // Get token
         _token = await _messaging.getToken(
           vapidKey: 'YOUR_VAPID_KEY', // Replace with your VAPID key
@@ -61,7 +60,9 @@ class NotificationService {
     });
 
     // Handle messages when app is opened from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
       if (message != null) {
         debugPrint('App opened from terminated state via notification');
         _handleMessageClick(message);
@@ -82,7 +83,7 @@ class NotificationService {
   void _handleMessageClick(RemoteMessage message) {
     final data = message.data;
     final type = data['type'];
-    
+
     switch (type) {
       case 'order_update':
         final orderId = data['orderId'];
@@ -110,7 +111,8 @@ class NotificationService {
         final notification = html.Notification(
           message.notification?.title ?? 'Nova notificação',
           body: message.notification?.body ?? '',
-          icon: message.notification?.android?.imageUrl ?? '/icons/icon-192.png',
+          icon:
+              message.notification?.android?.imageUrl ?? '/icons/icon-192.png',
         );
 
         notification.onClick.listen((event) {
@@ -119,7 +121,7 @@ class NotificationService {
         });
 
         // Auto close after 5 seconds
-        Future.delayed(Duration(seconds: 5), () {
+        Future.delayed(const Duration(seconds: 5), () {
           notification.close();
         });
       } catch (e) {

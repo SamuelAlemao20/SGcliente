@@ -1,18 +1,12 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 
-enum PaymentStatus {
-  pending,
-  processing,
-  completed,
-  failed,
-  cancelled
-}
+enum PaymentStatus { pending, processing, completed, failed, cancelled }
 
 class PaymentService {
   final Dio _dio = Dio();
-  static const String _baseUrl = 'YOUR_BACKEND_API_URL'; // Replace with your API
+  static const String _baseUrl =
+      'YOUR_BACKEND_API_URL'; // Replace with your API
 
   // Mercado Pago Integration
   Future<PaymentResponse> createPixPayment({
@@ -206,13 +200,6 @@ class PaymentService {
 }
 
 class PaymentResponse {
-  final String id;
-  final String status;
-  final String? qrCode;
-  final String? qrCodeBase64;
-  final String? pixCopyAndPaste;
-  final DateTime? expirationDate;
-
   PaymentResponse({
     required this.id,
     required this.status,
@@ -227,33 +214,35 @@ class PaymentResponse {
       id: json['id'].toString(),
       status: json['status'],
       qrCode: json['point_of_interaction']?['transaction_data']?['qr_code'],
-      qrCodeBase64: json['point_of_interaction']?['transaction_data']?['qr_code_base64'],
-      pixCopyAndPaste: json['point_of_interaction']?['transaction_data']?['qr_code'],
-      expirationDate: json['date_of_expiration'] != null 
-        ? DateTime.parse(json['date_of_expiration'])
-        : null,
+      qrCodeBase64: json['point_of_interaction']?['transaction_data']
+          ?['qr_code_base64'],
+      pixCopyAndPaste: json['point_of_interaction']?['transaction_data']
+          ?['qr_code'],
+      expirationDate: json['date_of_expiration'] != null
+          ? DateTime.parse(json['date_of_expiration'])
+          : null,
     );
   }
+  final String id;
+  final String status;
+  final String? qrCode;
+  final String? qrCodeBase64;
+  final String? pixCopyAndPaste;
+  final DateTime? expirationDate;
 }
 
 class CardInfo {
-  final String token;
-  final String paymentMethodId;
-  final int installments;
-
   CardInfo({
     required this.token,
     required this.paymentMethodId,
     required this.installments,
   });
+  final String token;
+  final String paymentMethodId;
+  final int installments;
 }
 
 class CouponValidation {
-  final bool isValid;
-  final double discountAmount;
-  final String? discountType; // 'percentage' or 'fixed'
-  final String? message;
-
   CouponValidation({
     required this.isValid,
     required this.discountAmount,
@@ -269,12 +258,14 @@ class CouponValidation {
       message: json['message'],
     );
   }
+  final bool isValid;
+  final double discountAmount;
+  final String? discountType; // 'percentage' or 'fixed'
+  final String? message;
 }
 
 class DeliveryFeeCalculation {
-  final double fee;
-  final int estimatedTime; // in minutes
-  final double distance; // in kilometers
+  // in kilometers
 
   DeliveryFeeCalculation({
     required this.fee,
@@ -289,9 +280,12 @@ class DeliveryFeeCalculation {
       distance: (json['distance'] ?? 0.0).toDouble(),
     );
   }
+  final double fee;
+  final int estimatedTime; // in minutes
+  final double distance;
 }
 
 class PaymentException implements Exception {
-  final String message;
   PaymentException(this.message);
+  final String message;
 }

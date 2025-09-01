@@ -1,18 +1,6 @@
-
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final bool isOutlined;
-  final IconData? icon;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final double? width;
-  final double height;
-  final BorderRadius? borderRadius;
-
   const CustomButton({
     Key? key,
     required this.text,
@@ -26,15 +14,27 @@ class CustomButton extends StatelessWidget {
     this.height = 52,
     this.borderRadius,
   }) : super(key: key);
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final bool isOutlined;
+  final IconData? icon;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? width;
+  final double height;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       width: width ?? double.infinity,
       height: height,
-      child: isOutlined ? _buildOutlinedButton(theme) : _buildElevatedButton(theme),
+      child: isOutlined
+          ? _buildOutlinedButton(theme)
+          : _buildElevatedButton(theme),
     );
   }
 
@@ -44,13 +44,14 @@ class CustomButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? theme.colorScheme.primary,
         foregroundColor: textColor ?? Colors.white,
-        elevation: 2,
-        shadowColor: theme.colorScheme.primary.withOpacity(0.3),
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.circular(12),
         ),
       ),
-      child: _buildButtonChild(theme),
+      child: _buildButtonChild(
+        theme,
+        isOutlined ? theme.colorScheme.primary : Colors.white,
+      ),
     );
   }
 
@@ -61,53 +62,45 @@ class CustomButton extends StatelessWidget {
         foregroundColor: textColor ?? theme.colorScheme.primary,
         side: BorderSide(
           color: backgroundColor ?? theme.colorScheme.primary,
-          width: 1.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.circular(12),
         ),
       ),
-      child: _buildButtonChild(theme),
+      child: _buildButtonChild(
+        theme,
+        theme.colorScheme.primary,
+      ),
     );
   }
 
-  Widget _buildButtonChild(ThemeData theme) {
+  Widget _buildButtonChild(ThemeData theme, Color loadingColor) {
     if (isLoading) {
       return SizedBox(
-        width: 20,
-        height: 20,
+        width: 24,
+        height: 24,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            isOutlined 
-                ? theme.colorScheme.primary
-                : Colors.white,
-          ),
+          valueColor: AlwaysStoppedAnimation<Color>(loadingColor),
         ),
       );
     }
 
-    if (icon != null) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (icon != null) ...[
           Icon(icon, size: 20),
           const SizedBox(width: 8),
-          Text(
-            text,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
         ],
-      );
-    }
-
-    return Text(
-      text,
-      style: theme.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
+        Text(
+          text,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+      ],
     );
   }
 }

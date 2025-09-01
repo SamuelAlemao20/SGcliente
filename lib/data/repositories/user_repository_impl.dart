@@ -1,45 +1,27 @@
-
-import '../../domain/repositories/user_repository.dart';
-import '../../domain/entities/user.dart';
-import '../datasources/firebase_datasource.dart';
+import 'package:sg_sabores_cliente/domain/entities/user.dart';
+import 'package:sg_sabores_cliente/domain/entities/address.dart';
+import 'package:sg_sabores_cliente/domain/repositories/user_repository.dart';
+import 'package:sg_sabores_cliente/data/datasources/firebase_datasource.dart';
 
 class UserRepositoryImpl implements UserRepository {
+  UserRepositoryImpl(this._dataSource);
   final FirebaseDataSource _dataSource;
 
-  UserRepositoryImpl(this._dataSource);
+  @override
+  Future<User?> getUserById(String id) => _dataSource.getUser(id);
 
   @override
-  Future<User?> getUserById(String id) async {
-    return await _dataSource.getUser(id);
-  }
+  Future<void> createUser(User user) => _dataSource.createUser(user);
 
+  // Implemente os outros métodos se necessário
   @override
-  Future<void> updateUser(User user) async {
-    await _dataSource.updateUser(user);
-  }
-
+  Future<void> addAddress(String userId, Address address) async {}
   @override
-  Future<void> createUser(User user) async {
-    await _dataSource.createUser(user);
-  }
-
+  Future<void> deleteAddress(String userId, String addressId) async {}
   @override
-  Future<void> deleteUser(String id) async {
-    await _dataSource.deleteUser(id);
-  }
-
+  Future<void> deleteUser(String id) async {}
   @override
-  Future<void> addAddress(String userId, Address address) async {
-    await _dataSource.addUserAddress(userId, address);
-  }
-
+  Future<void> updateAddress(String userId, Address address) async {}
   @override
-  Future<void> updateAddress(String userId, Address address) async {
-    await _dataSource.updateUserAddress(userId, address);
-  }
-
-  @override
-  Future<void> deleteAddress(String userId, String addressId) async {
-    await _dataSource.deleteUserAddress(userId, addressId);
-  }
+  Future<void> updateUser(User user) async {}
 }

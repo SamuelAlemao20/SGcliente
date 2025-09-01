@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -6,7 +5,8 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Generic CRUD Operations
-  Future<DocumentReference> create(String collection, Map<String, dynamic> data) async {
+  Future<DocumentReference> create(
+      String collection, Map<String, dynamic> data) async {
     try {
       data['createdAt'] = FieldValue.serverTimestamp();
       data['updatedAt'] = FieldValue.serverTimestamp();
@@ -16,7 +16,8 @@ class FirestoreService {
     }
   }
 
-  Future<void> createWithId(String collection, String id, Map<String, dynamic> data) async {
+  Future<void> createWithId(
+      String collection, String id, Map<String, dynamic> data) async {
     try {
       data['createdAt'] = FieldValue.serverTimestamp();
       data['updatedAt'] = FieldValue.serverTimestamp();
@@ -34,12 +35,14 @@ class FirestoreService {
     }
   }
 
-  Future<QuerySnapshot> readCollection(String collection, {
+  Future<QuerySnapshot> readCollection(
+    String collection, {
     Query Function(CollectionReference)? queryBuilder,
   }) async {
     try {
-      CollectionReference collectionRef = _firestore.collection(collection);
-      Query query = queryBuilder?.call(collectionRef) ?? collectionRef;
+      final CollectionReference collectionRef =
+          _firestore.collection(collection);
+      var query = queryBuilder?.call(collectionRef) ?? collectionRef;
       return await query.get();
     } catch (e) {
       throw Exception('Erro ao ler coleção: $e');
@@ -50,15 +53,17 @@ class FirestoreService {
     return _firestore.collection(collection).doc(id).snapshots();
   }
 
-  Stream<QuerySnapshot> watchCollection(String collection, {
+  Stream<QuerySnapshot> watchCollection(
+    String collection, {
     Query Function(CollectionReference)? queryBuilder,
   }) {
-    CollectionReference collectionRef = _firestore.collection(collection);
-    Query query = queryBuilder?.call(collectionRef) ?? collectionRef;
+    final CollectionReference collectionRef = _firestore.collection(collection);
+    var query = queryBuilder?.call(collectionRef) ?? collectionRef;
     return query.snapshots();
   }
 
-  Future<void> update(String collection, String id, Map<String, dynamic> data) async {
+  Future<void> update(
+      String collection, String id, Map<String, dynamic> data) async {
     try {
       data['updatedAt'] = FieldValue.serverTimestamp();
       await _firestore.collection(collection).doc(id).update(data);
@@ -87,7 +92,8 @@ class FirestoreService {
   }
 
   // Transaction
-  Future<T> runTransaction<T>(Future<T> Function(Transaction) transactionHandler) async {
+  Future<T> runTransaction<T>(
+      Future<T> Function(Transaction) transactionHandler) async {
     try {
       return await _firestore.runTransaction(transactionHandler);
     } catch (e) {
@@ -111,15 +117,16 @@ class FirestoreService {
     Query Function(CollectionReference)? queryBuilder,
   }) async {
     try {
-      CollectionReference collectionRef = _firestore.collection(collection);
-      Query query = queryBuilder?.call(collectionRef) ?? collectionRef;
-      
+      final CollectionReference collectionRef =
+          _firestore.collection(collection);
+      var query = queryBuilder?.call(collectionRef) ?? collectionRef;
+
       query = query.limit(limit);
-      
+
       if (startAfter != null) {
         query = query.startAfterDocument(startAfter);
       }
-      
+
       return await query.get();
     } catch (e) {
       throw Exception('Erro na paginação: $e');

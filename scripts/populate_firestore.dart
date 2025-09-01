@@ -1,8 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import '../lib/firebase_options.dart';
+import 'package:sg_sabores_cliente/firebase_options.dart';
 
 // Script para popular dados iniciais no Firestore
 // Execute com: dart run scripts/populate_firestore.dart
@@ -18,13 +17,13 @@ void main() async {
 
   // Categories
   await populateCategories(firestore);
-  
+
   // Restaurants
   await populateRestaurants(firestore);
-  
+
   // Products
   await populateProducts(firestore);
-  
+
   // Coupons
   await populateCoupons(firestore);
 
@@ -36,25 +35,29 @@ Future<void> populateCategories(FirebaseFirestore firestore) async {
     {
       'name': 'Pizzas',
       'description': 'Deliciosas pizzas artesanais',
-      'imageUrl': 'https://i.ytimg.com/vi/p6sYCzq9twY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDhs1VNbxQHaRHYYOrRTUHCsW3wGQ',
+      'imageUrl':
+          'https://i.ytimg.com/vi/p6sYCzq9twY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDhs1VNbxQHaRHYYOrRTUHCsW3wGQ',
       'order': 1,
     },
     {
       'name': 'Hambúrgueres',
       'description': 'Hambúrgueres suculentos',
-      'imageUrl': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300',
       'order': 2,
     },
     {
       'name': 'Japonesa',
       'description': 'Sushi e pratos japoneses',
-      'imageUrl': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=300',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=300',
       'order': 3,
     },
     {
       'name': 'Brasileira',
       'description': 'Comida caseira brasileira',
-      'imageUrl': 'https://i.ytimg.com/vi/0wOyK8JYyZ8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBxumwXhgMXa0CtatzQ6HdHe_ySmg',
+      'imageUrl':
+          'https://i.ytimg.com/vi/0wOyK8JYyZ8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBxumwXhgMXa0CtatzQ6HdHe_ySmg',
       'order': 4,
     },
   ];
@@ -74,8 +77,10 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
   final restaurants = [
     {
       'name': 'Pizzaria Italiana',
-      'description': 'Autênticas pizzas italianas feitas com ingredientes importados',
-      'imageUrl': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500',
+      'description':
+          'Autênticas pizzas italianas feitas com ingredientes importados',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500',
       'category': 'Pizzas',
       'rating': 4.5,
       'reviewCount': 150,
@@ -97,7 +102,11 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
       'workingHours': {
         'monday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '23:00'},
         'tuesday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '23:00'},
-        'wednesday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '23:00'},
+        'wednesday': {
+          'isOpen': true,
+          'openTime': '18:00',
+          'closeTime': '23:00'
+        },
         'thursday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '23:00'},
         'friday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '00:00'},
         'saturday': {'isOpen': true, 'openTime': '18:00', 'closeTime': '00:00'},
@@ -107,7 +116,8 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
     {
       'name': 'Burger House',
       'description': 'Os melhores hambúrgueres artesanais da cidade',
-      'imageUrl': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500',
       'category': 'Hambúrgueres',
       'rating': 4.7,
       'reviewCount': 89,
@@ -129,7 +139,11 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
       'workingHours': {
         'monday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '23:00'},
         'tuesday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '23:00'},
-        'wednesday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '23:00'},
+        'wednesday': {
+          'isOpen': true,
+          'openTime': '11:00',
+          'closeTime': '23:00'
+        },
         'thursday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '23:00'},
         'friday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '00:00'},
         'saturday': {'isOpen': true, 'openTime': '11:00', 'closeTime': '00:00'},
@@ -139,7 +153,8 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
     {
       'name': 'Sushi Zen',
       'description': 'Sushi fresco e pratos japoneses tradicionais',
-      'imageUrl': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=500',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=500',
       'category': 'Japonesa',
       'rating': 4.8,
       'reviewCount': 203,
@@ -161,7 +176,11 @@ Future<void> populateRestaurants(FirebaseFirestore firestore) async {
       'workingHours': {
         'monday': {'isOpen': false, 'openTime': '19:00', 'closeTime': '23:00'},
         'tuesday': {'isOpen': true, 'openTime': '19:00', 'closeTime': '23:00'},
-        'wednesday': {'isOpen': true, 'openTime': '19:00', 'closeTime': '23:00'},
+        'wednesday': {
+          'isOpen': true,
+          'openTime': '19:00',
+          'closeTime': '23:00'
+        },
         'thursday': {'isOpen': true, 'openTime': '19:00', 'closeTime': '23:00'},
         'friday': {'isOpen': true, 'openTime': '19:00', 'closeTime': '00:00'},
         'saturday': {'isOpen': true, 'openTime': '19:00', 'closeTime': '00:00'},
@@ -186,19 +205,18 @@ Future<void> populateProducts(FirebaseFirestore firestore) async {
   final restaurantsQuery = await firestore.collection('restaurants').get();
   final categoriesQuery = await firestore.collection('categories').get();
 
-  final pizzaCategory = categoriesQuery.docs.firstWhere(
-    (doc) => doc.data()['name'] == 'Pizzas'
-  );
-  
-  final pizzaRestaurant = restaurantsQuery.docs.firstWhere(
-    (doc) => doc.data()['name'] == 'Pizzaria Italiana'
-  );
+  final pizzaCategory =
+      categoriesQuery.docs.firstWhere((doc) => doc.data()['name'] == 'Pizzas');
+
+  final pizzaRestaurant = restaurantsQuery.docs
+      .firstWhere((doc) => doc.data()['name'] == 'Pizzaria Italiana');
 
   final products = [
     {
       'name': 'Pizza Margherita',
       'description': 'Molho de tomate, mussarela, manjericão fresco e azeite',
-      'imageUrl': 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400',
       'price': 35.90,
       'categoryId': pizzaCategory.id,
       'restaurantId': pizzaRestaurant.id,
@@ -249,7 +267,8 @@ Future<void> populateProducts(FirebaseFirestore firestore) async {
     {
       'name': 'Pizza Pepperoni',
       'description': 'Molho de tomate, mussarela e pepperoni',
-      'imageUrl': 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400',
       'price': 42.90,
       'categoryId': pizzaCategory.id,
       'restaurantId': pizzaRestaurant.id,
@@ -302,7 +321,7 @@ Future<void> populateCoupons(FirebaseFirestore firestore) async {
       'minimumAmount': 25.0,
       'maxDiscountAmount': 15.0,
       'isActive': true,
-      'expirationDate': DateTime.now().add(Duration(days: 30)),
+      'expirationDate': DateTime.now().add(const Duration(days: 30)),
       'description': 'Desconto de 10% para novos usuários',
     },
     {
@@ -311,7 +330,7 @@ Future<void> populateCoupons(FirebaseFirestore firestore) async {
       'discountValue': 5.0,
       'minimumAmount': 30.0,
       'isActive': true,
-      'expirationDate': DateTime.now().add(Duration(days: 15)),
+      'expirationDate': DateTime.now().add(const Duration(days: 15)),
       'description': 'R\$ 5 de desconto na taxa de entrega',
     },
   ];
