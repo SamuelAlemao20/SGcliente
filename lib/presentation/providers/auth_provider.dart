@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -113,10 +112,10 @@ class AuthProvider extends ChangeNotifier {
       _clearError();
 
       final credential = await _authService.signInWithGoogle();
-      
+
       if (credential?.user != null) {
         final user = credential!.user!;
-        
+
         // Check if user profile exists, if not create it
         final doc = await _firestoreService.read('users', user.uid);
         if (!doc.exists) {
@@ -175,13 +174,13 @@ class AuthProvider extends ChangeNotifier {
 
       if (_currentUser != null && _userProfile != null) {
         final updates = <String, dynamic>{};
-        
+
         if (name != null) updates['name'] = name;
         if (phone != null) updates['phone'] = phone;
         if (photoUrl != null) updates['photoUrl'] = photoUrl;
 
         await _firestoreService.update('users', _currentUser!.uid, updates);
-        
+
         // Update Firebase Auth profile
         if (name != null || photoUrl != null) {
           await _authService.updateProfile(
@@ -205,15 +204,15 @@ class AuthProvider extends ChangeNotifier {
     try {
       if (_currentUser != null && _userProfile != null) {
         final addresses = List<app_user.Address>.from(_userProfile!.addresses);
-        
+
         // If this is the first address or marked as default, make it default
         if (addresses.isEmpty || address.isDefault) {
           // Remove default from other addresses
           addresses.forEach((addr) => addr.copyWith(isDefault: false));
         }
-        
+
         addresses.add(address);
-        
+
         await _firestoreService.update('users', _currentUser!.uid, {
           'addresses': addresses.map((a) => _addressToMap(a)).toList(),
         });
@@ -252,8 +251,9 @@ class AuthProvider extends ChangeNotifier {
       phone: data['phone'],
       photoUrl: data['photoUrl'],
       addresses: (data['addresses'] as List<dynamic>?)
-          ?.map((a) => _mapAddressFromFirestore(a as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((a) => _mapAddressFromFirestore(a as Map<String, dynamic>))
+              .toList() ??
+          [],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );

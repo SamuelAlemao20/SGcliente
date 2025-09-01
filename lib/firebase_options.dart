@@ -60,4 +60,5 @@ class DefaultFirebaseOptions {
     authDomain: 'sg-sabores.firebaseapp.com',
     storageBucket: 'sg-sabores.firebasestorage.app',
   );
+
 }

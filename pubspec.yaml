@@ -65,11 +65,6 @@ dependencies:
   # Maps
   google_maps_flutter_web: ^0.5.4+2
 
-  # Payments
-  mercado_pago_integration: ^1.0.0
-
-  # PWA
-  flutter_pwa: ^1.0.4
 
   # Permissions
   permission_handler: ^11.0.1
